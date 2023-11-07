@@ -1,0 +1,23 @@
+FACT_RENT FORMULAS
+
+max_price_by_city = CALCULATE(MAX(Rooms[price]),GROUPBY(Cities,Cities[id]))
+max_price_by_nh = CALCULATE(MAX(Rooms[price]),GROUPBY(Neighbourhoods,Neighbourhoods[id]))
+min_price = CALCULATE(MIN(Rooms[price]),FILTER(Rooms,Rooms[price]>0))
+number_of_reviews = CALCULATE(SUM(Rooms[number_of_reviews]))
+price_avg_by_city = CALCULATE(DIVIDE(SUM(Rooms[price]), Fact_Rent[records_by_city]))
+price_avg_by_nh = CALCULATE(DIVIDE(SUM(Rooms[price]), Fact_Rent[records_by_nh]))
+profit
+profit_avg_by_city = CALCULATE(DIVIDE(SUMX(Rooms,Rooms[price]*Rooms[minimum_nights]*Rooms[number_of_reviews]), [records_by_city]))
+profit_avg_by_nh = CALCULATE(DIVIDE(SUMX(Rooms,Rooms[price]*Rooms[minimum_nights]*Rooms[number_of_reviews]), [records_by_nh]))
+records_by_city = CALCULATE(COUNTAX(Fact_Rent,'Fact_Rent'[city_id]))
+records_by_nh = CALCULATE(COUNTROWS(Rooms))
+reviews_per_month_by_city = CALCULATE(SUM(Rooms[reviews_per_month]))
+
+OLD ROOMS FORMULAS
+
+inc_percent = (100 - (DIVIDE([records_on]*100, [new_records])))/100
+records_on = COUNT(Old_rooms[id])
+records_off = CALCULATE([records_on],REMOVEFILTERS(Cities)) - [records_on]
+new_records = (COUNT(Fact_Rent[room_id])-[records_on])
+profit_avg_old = DIVIDE(SUMX(Old_rooms,Old_rooms[price]*Old_rooms[number_of_reviews]), [records_on])
+profit_avg_new = [profit_avg_by_city]
